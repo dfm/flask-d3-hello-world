@@ -28,6 +28,10 @@ path.line {
     fill: none;
 }
 
+.tooltip {
+    color: #ff0000;
+}
+
     </style>
 
 </head>
@@ -49,8 +53,7 @@ path.line {
                     .append("svg:g")
                         .attr("transform", "translate(" + margin + ", " + margin + ")");
 
-        // Axes scaling.
-	// @dfm: are these "xscale" and "yscale" arbitrary functions, or are these reserved keywords?
+        // Axes scaling functions.
         var xscale = d3.scale.linear().range([0, w]);
         var yscale = d3.scale.linear().range([h, 0]);
 
@@ -65,7 +68,6 @@ path.line {
         // Load the data.
         var callback = function (data) {
             // Rescale the axes.
-	    // @dfm: is this "domain" method generic, or is it part of the d3.scale.linear() object?
             xscale.domain([d3.min(data, function (d) { return d.x; }) - 0.05,
                            d3.max(data, function (d) { return d.x; }) + 0.05]);
             yscale.domain([d3.min(data, function (d) { return d.y; }) - 0.05,
@@ -78,9 +80,25 @@ path.line {
             // Insert the data points.
             svg.selectAll("circle").data(data).enter()
                 .append("circle")
+                    .attr("id", function (d) { return d._id; })
                     .attr("cx", function (d) { return xscale(d.x); })
                     .attr("cy", function (d) { return yscale(d.y); })
-                    .attr( "r", function (d) { return 2. * Math.sqrt(d.area); });
+                    .attr( "r", function (d) { return 2 * Math.sqrt(d.area); })
+                    .on("mouseover", function () {
+                        svg.selectAll(".tooltip").attr("display", "none");
+                        svg.select("#tooltip-" + this.id).attr("display",
+                                    "block");
+                    })
+                    .on("mouseout", function () {
+                        svg.selectAll(".tooltip").attr("display", "none");
+                    });
+
+            svg.selectAll(".tooltip").data(data).enter()
+                .append("div")
+                    .attr("class", "tooltip")
+                    .attr("id", function (d) { return "tooltip-" + d._id; })
+                    .attr("style", "display: none;")
+                    .text(function (d) { return "This is point " + d._id; });
         };
 
         d3.json("/data", callback);
