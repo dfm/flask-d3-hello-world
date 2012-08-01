@@ -1,8 +1,12 @@
-# flask+d3 hello world
+# flask+d3 Hello World
 
 ### author
 
-[Dan Foreman-Mackey](http://danfm.ca)
+* [Dan Foreman-Mackey](http://danfm.ca/)
+
+### contributors
+
+* [David W. Hogg](http://cosmo.nyu.edu/hogg/)
 
 ### do it
 
