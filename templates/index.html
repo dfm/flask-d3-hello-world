@@ -18,6 +18,10 @@ path.line {
     stroke-width: 1px;
 }
 
+circle {
+    cursor: pointer;
+}
+
 .axis {
     shape-rendering: crispEdges;
 }
@@ -29,7 +33,15 @@ path.line {
 }
 
 .tooltip {
-    color: #ff0000;
+    display: none;
+}
+
+.tooltip.active {
+    display: block;
+}
+
+.tooltip rect {
+    fill: #ff0000;
 }
 
     </style>
@@ -38,6 +50,12 @@ path.line {
 <body>
 
     <h1>Hello World using d3.js &amp; Flask</h1>
+
+    <div id="info">
+        <div id="point-info">
+            Click on a point.
+        </div>
+    </div>
 
     <div id="plot">
     </div>
@@ -53,6 +71,11 @@ path.line {
                     .append("svg:g")
                         .attr("transform", "translate(" + margin + ", " + margin + ")");
 
+        // The colorbar.
+        var color = d3.scale.quantize()
+                      .range(["#156b87", "#876315", "#543510", "#872815"])
+                      .domain([0, 1]);
+
         // Axes scaling functions.
         var xscale = d3.scale.linear().range([0, w]);
         var yscale = d3.scale.linear().range([h, 0]);
@@ -64,6 +87,12 @@ path.line {
         svg.append("svg:g").attr("class", "x axis")
                            .attr("transform", "translate(0, " + h + ")");
         svg.append("svg:g").attr("class", "y axis");
+
+        // Show the information about a particular point.
+        var show_info = function (d) {
+            d3.select("#point-info").text("This is point " + d._id + ". "
+                + "It has the coordinates (" + d.x + ", " + d.y + ").");
+        };
 
         // Load the data.
         var callback = function (data) {
@@ -83,22 +112,9 @@ path.line {
                     .attr("id", function (d) { return d._id; })
                     .attr("cx", function (d) { return xscale(d.x); })
                     .attr("cy", function (d) { return yscale(d.y); })
-                    .attr( "r", function (d) { return 2 * Math.sqrt(d.area); })
-                    .on("mouseover", function () {
-                        svg.selectAll(".tooltip").attr("display", "none");
-                        svg.select("#tooltip-" + this.id).attr("display",
-                                    "block");
-                    })
-                    .on("mouseout", function () {
-                        svg.selectAll(".tooltip").attr("display", "none");
-                    });
-
-            svg.selectAll(".tooltip").data(data).enter()
-                .append("div")
-                    .attr("class", "tooltip")
-                    .attr("id", function (d) { return "tooltip-" + d._id; })
-                    .attr("style", "display: none;")
-                    .text(function (d) { return "This is point " + d._id; });
+                    .attr("r", function (d) { return 2 * Math.sqrt(d.area); })
+                    .style("fill", function (d) { return color(d.color); })
+                    .on("mousedown", show_info);
         };
 
         d3.json("/data", callback);

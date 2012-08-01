@@ -34,7 +34,9 @@ def data(ndata=100):
     x = 10 * np.random.rand(ndata) - 5
     y = 0.5 * x + 0.5 * np.random.randn(ndata)
     A = 10. ** np.random.rand(ndata)
-    return json.dumps([{"_id": i, "x": x[i], "y": y[i], "area": A[i]}
+    c = np.random.rand(ndata)
+    return json.dumps([{"_id": i, "x": x[i], "y": y[i], "area": A[i],
+        "color": c[i]}
         for i in range(ndata)])
 
 
