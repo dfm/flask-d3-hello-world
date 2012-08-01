@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
 
-    <title>Hello World</title>
+    <title>flask+d3 Hello World</title>
 
     <script src="http://d3js.org/d3.v2.js"></script>
     <style>
@@ -50,6 +50,7 @@ path.line {
                         .attr("transform", "translate(" + margin + ", " + margin + ")");
 
         // Axes scaling.
+	// @dfm: are these "xscale" and "yscale" arbitrary functions, or are these reserved keywords?
         var xscale = d3.scale.linear().range([0, w]);
         var yscale = d3.scale.linear().range([h, 0]);
 
@@ -64,6 +65,7 @@ path.line {
         // Load the data.
         var callback = function (data) {
             // Rescale the axes.
+	    // @dfm: is this "domain" method generic, or is it part of the d3.scale.linear() object?
             xscale.domain([d3.min(data, function (d) { return d.x; }) - 0.05,
                            d3.max(data, function (d) { return d.x; }) + 0.05]);
             yscale.domain([d3.min(data, function (d) { return d.y; }) - 0.05,
