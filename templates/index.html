@@ -78,7 +78,7 @@ path.line {
                 .append("circle")
                     .attr("cx", function (d) { return xscale(d.x); })
                     .attr("cy", function (d) { return yscale(d.y); })
-                    .attr("r", 3.0);
+                    .attr( "r", function (d) { return 2. * Math.sqrt(d.area); });
         };
 
         d3.json("/data", callback);
